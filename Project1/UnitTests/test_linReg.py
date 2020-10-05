@@ -14,6 +14,11 @@ from designMat import designMatrix
 
 
 def test_linregOwn_OLS():
+    """
+    Tests the function OLS of the linregOwn class given in LinearReg.py. The test is comprised of the
+    orthonormal matrix example where we can evaluate the answer manually
+    """
+    
     X = np.array([[np.cos(5), np.sin(5)], [-np.sin(5), np.cos(5)]])
     y= np.array([[7],[4]])
     beta_manual = np.array([[7*np.cos(5)-4*np.sin(5)], [7*np.sin(5)+4*np.cos(5)]])
@@ -23,6 +28,11 @@ def test_linregOwn_OLS():
 
 
 def test_linregOwn_Ridge():
+    """
+    Tests the function Ridge of the linregOwn class given in LinearReg.py. The test is comprised of the
+    orthonormal matrix example where we can evaluate the answer manually
+    """
+    
     X = np.array([[np.cos(5), np.sin(5)], [-np.sin(5), np.cos(5)]])
     y= np.array([[7],[4]])
     lambda_ = 0.1
@@ -34,6 +44,10 @@ def test_linregOwn_Ridge():
 
 
 def test_MSE_R2():
+    """
+    Tests the functions MSE and R2 of the linregOwn class given in LinearReg.py. The test is comprised of the
+    orthonormal matrix example where we can evaluate the answer manually
+    """
     X = np.array([[np.cos(5), np.sin(5)], [-np.sin(5), np.cos(5)]])
     y= np.array([[7],[4]])
     MSE_manual = 0
