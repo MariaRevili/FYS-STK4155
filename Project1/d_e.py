@@ -245,8 +245,8 @@ def plot_bias_var_tradeoff(ndegree = 5, method = 'ols'):
 
 
 ##MSE bias-variance tradeoff using bootstrap for different methods
-plot_bias_var_tradeoff(ndegree=6, method = 'ols')
+plot_bias_var_tradeoff(ndegree=10, method = 'ols')
 
-plot_bias_var_tradeoff(ndegree=6, method = 'ridge')
+plot_bias_var_tradeoff(ndegree=10, method = 'ridge')
 
-plot_bias_var_tradeoff(ndegree=6, method = 'lasso')
+plot_bias_var_tradeoff(ndegree=10, method = 'lasso')

@@ -210,6 +210,7 @@ class linregSKL:
         self._MSE           = None
         self._R2            = None
         self._betaVariance  = None
+
         
     def fit(self, X_train, y_train, lambda_ = 0):
         self.X_train = X_train
@@ -245,11 +246,11 @@ class linregSKL:
     def predict(self, X_test):
         self.X_test = X_test
         if self.method == 'ols':
-            self._sklPredict()
+            self._sklPredict(X_test)
         return self.yHat
                
-    def _sklPredict(self):
-        ##this
+    def _sklPredict(self, X_test):
+        self.X_test = X_test
         ## Since our data contains 1-s, we should subtract intercept, since scikit learn additionally
         ##generates the 1-s
         self.yHat = self.ols.predict(self.X_test) - self.beta[0]
@@ -257,7 +258,7 @@ class linregSKL:
     def MSE(self, y_test):
         self.y_test = y_test
         if self.yHat is None :
-            self._sklPredict()
+            self._sklPredict(X_test)
         self._MSE = metrics.mean_squared_error(self.y_test, self.yHat)
         return self._MSE
     
