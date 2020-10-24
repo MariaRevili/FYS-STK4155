@@ -1,0 +1,80 @@
+Regression problem (a, b, c)
+
+
+## After tuning hyper-parameters on the validation set (see validation results below)
+## Main Results:  OLS and NNets perform similar, OLS performs slightly better).
+### Ridge performs the worst ### . 
+
+Test MSE OLS: 0.008224701163420348
+Test MSE Ridge: 0.09724828014211755
+Test MSE NN own implementation: 0.014 (sgd)
+Test MSE NN tensorflow: 0.012  (adam )
+
+
+
+Sigmoid activation function -playing with hidden neurons
+(learning rate = 0.0001, stochastic gradient descent decay = 0.01)
+
+For 10 hidden neurons MSE is 0.02239658997942555
+For 15 hidden neurons MSE is 0.020254438278280624
+For 40 hidden neurons MSE is 0.016402467850620467
+For 50 hidden neurons MSE is 0.015685259862494826
+
+
+
+ReLu and Leaky ReLu parameters (alpha and lambda)
+(learning rate = 0.001, stochastic gradient descent decay = 0.01)
+For alpha 0.01 and lambda 0.01 in activation function relu MSE is 0.05558709653079883
+For alpha 0.01 and lambda 0.1 in activation function relu MSE is 0.018826465442034403
+For alpha 0.1 and lambda 0.01 in activation function relu MSE is 0.05558709653079883
+For alpha 0.1 and lambda 0.1 in activation function relu MSE is 0.018826465442034403
+For alpha 0.01 and lambda 0.01 in activation function leaky_relu MSE is 0.055585786599380044
+For alpha 0.01 and lambda 0.1 in activation function leaky_relu MSE is 0.018836793037616827
+For alpha 0.1 and lambda 0.01 in activation function leaky_relu MSE is 0.05557399336569342
+For alpha 0.1 and lambda 0.1 in activation function leaky_relu MSE is 0.018951689623778228
+
+
+### Sigmoid MSE ######## 50 neurons
+Learning rate  = 1e-05, Lambda = 1e-05, MSE = 0.02049264056825675 
+Learning rate  = 1e-05, Lambda = 0.00031622776601683794, MSE = 0.020496575880012576 
+Learning rate  = 1e-05, Lambda = 0.01, MSE = 0.020628625292634383
+Learning rate  = 1.778279410038923e-05, Lambda = 1e-05, MSE = 0.017414936176709528
+Learning rate  = 1.778279410038923e-05, Lambda = 0.00031622776601683794, MSE = 0.017417828845024703
+Learning rate  = 1.778279410038923e-05, Lambda = 0.01, MSE = 0.017533137403162175
+Learning rate  = 3.1622776601683795e-05, Lambda = 1e-05, MSE = 0.016315727687539253
+Learning rate  = 3.1622776601683795e-05, Lambda = 0.00031622776601683794, MSE = 0.016312277246726233
+Learning rate  = 3.1622776601683795e-05, Lambda = 0.01, MSE = 0.0162845504095994
+Learning rate  = 5.623413251903491e-05, Lambda = 1e-05, MSE = 0.016183872252525582
+Learning rate  = 5.623413251903491e-05, Lambda = 0.00031622776601683794, MSE = 0.016165527111706997
+Learning rate  = 5.623413251903491e-05, Lambda = 0.01, MSE = 0.015865847206579468
+Learning rate  = 0.0001, Lambda = 1e-05, MSE = 0.01654310242327394
+Learning rate  = 0.0001, Lambda = 0.00031622776601683794, MSE = 0.01648068032847471
+Learning rate  = 0.0001, Lambda = 0.01, MSE = 0.015685259862494826
+
+### ReLu MSE ######## 50 neurons
+Learning rate  = 1e-06, Lambda = 1e-05, MSE = 0.5679261749207141
+Learning rate  = 1e-06, Lambda = 0.00031622776601683794, MSE = 0.5679054471801157
+Learning rate  = 1e-06, Lambda = 0.01, MSE = 0.5672506638496525
+Learning rate  = 1e-05, Lambda = 1e-05, MSE = 0.11717326760827215
+Learning rate  = 1e-05, Lambda = 0.00031622776601683794, MSE = 0.1171510797629999
+Learning rate  = 1e-05, Lambda = 0.01, MSE = 0.1164593473972382
+Learning rate  = 0.0001, Lambda = 1e-05, MSE = 0.03254985668548979
+Learning rate  = 0.0001, Lambda = 0.00031622776601683794, MSE = 0.03257206613316422
+Learning rate  = 0.0001, Lambda = 0.01, MSE = 0.03346519287193622
+
+### Leaky ReLu MSE ######## 50 neurons
+Learning rate  = 1e-05, Lambda = 0.01, MSE = 0.0766217791995144 
+Learning rate  = 1e-05, Lambda = 0.03162277660168379, MSE = 0.075288095171664 
+Learning rate  = 1e-05, Lambda = 0.1, MSE = 0.07177197018202922
+Learning rate  = 1.883649089489802e-05, Lambda = 0.01, MSE = 0.06668029701881815
+Learning rate  = 1.883649089489802e-05, Lambda = 0.03162277660168379, MSE = 0.06518685388920613
+Learning rate  = 1.883649089489802e-05, Lambda = 0.1, MSE = 0.061804259646185945
+Learning rate  = 3.5481338923357534e-05, Lambda = 0.01, MSE = 0.05415326285750087
+Learning rate  = 3.5481338923357534e-05, Lambda = 0.03162277660168379, MSE = 0.05322975070301549
+Learning rate  = 3.5481338923357534e-05, Lambda = 0.1, MSE = 0.05228060490663952
+Learning rate  = 6.683439175686149e-05, Lambda = 0.01, MSE = 0.04142774354538064
+Learning rate  = 6.683439175686149e-05, Lambda = 0.03162277660168379, MSE = 0.04205154661019288
+Learning rate  = 6.683439175686149e-05, Lambda = 0.1, MSE = 0.046899925689105955
+Learning rate  = 0.00012589254117941674, Lambda = 0.01, MSE = 0.04588655799144637
+Learning rate  = 0.00012589254117941674, Lambda = 0.03162277660168379, MSE = 0.03462617457444048
+Learning rate  = 0.00012589254117941674, Lambda = 0.1, MSE = 0.04840658941572258
