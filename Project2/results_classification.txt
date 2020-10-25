@@ -1,5 +1,5 @@
 ###Main Findings after hyper-parameter tuning on the validation data #####
-## NNets perform much better
+## NNets perform slightly better
 Test accuracy neural nets:  0.9444444444444444 (eta = 0.001, lambda = 0.001, 40 neurons, 300 iterations)
 Test accuracy Logistic Regression: 0.9222222222222223 (eta = 0.01, lambda = 1, 300 iterations)
 
