@@ -3,7 +3,6 @@ import sys
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix 
 import os
-from numba import jit
 
 
 

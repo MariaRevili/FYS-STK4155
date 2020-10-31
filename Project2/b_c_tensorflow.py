@@ -102,7 +102,7 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
             print("Test MSE: %.3f" % scores)
             print()  
   
-#train_dnn()  
+train_dnn()  
    
 ###For learning rate 0.1 and wno regularizing (i.e lambda = 0), we have the best test accuracy, thus use them here
 

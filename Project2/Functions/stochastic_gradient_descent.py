@@ -49,6 +49,17 @@ def learning_schedule(t):
 
 
 def iterate_minibatches(inputs, targets, batchsize, shuffle=True):
+    
+    """
+    Slices the data into batches. 
+    Arguments: inputs - numpy array type 
+               targets - numpy array
+               batchsize - the number of slices
+               shuffle - if True, shuffles the data 
+    
+    Output: a batch of the original data
+    
+    """
     assert inputs.shape[0] == targets.shape[0]
     if shuffle:
         indices = np.random.permutation(inputs.shape[0])
