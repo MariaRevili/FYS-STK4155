@@ -1,4 +1,4 @@
-Project 1: Linear Regression methods (Deadline: October 10, 2020)
+Project 1: Artificial Neural Networks (Deadline: November 9, 2020)
 
 Clone the repository:
 ```
