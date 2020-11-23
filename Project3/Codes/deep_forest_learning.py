@@ -19,33 +19,41 @@ data = pd.DataFrame(data)
 #print(y.head(3))
 # print(data["eyeDetection"].mean())
 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=1)
 
 ##scale the data 
 
 scaler = StandardScaler()
-scaler.fit(X)
-X = scaler.transform(X)
+scaler.fit(X_train)
+X_train = scaler.transform(X_train)
+X_test = scaler.transform(X_test)
+
 
 ### Obtain predictions from each weak tree and then use these predictions as covariates for neural networks
 np.random.seed(20)
-n = 1000
-pred_mat = np.ones((y.size, 1))
+pred_train = np.ones((y_train.size, 1))
+pred_test = np.ones((y_test.size, 1))
 
-rf=RandomForestClassifier(n_estimators=1000, bootstrap=True) ##Number of Trees to build
-rf.fit(X, y)
+
+rf=RandomForestClassifier(n_estimators=500, bootstrap=False) ##Number of Trees to build
+rf.fit(X_train, y_train)
 
 for tree in rf.estimators_:
-    per_tree_pred = tree.predict(X).reshape(-1,1)
-    pred_mat = np.c_[pred_mat, per_tree_pred]
-
-pred_mat = pd.DataFrame(pred_mat)
-pred_mat = pred_mat.iloc[:, 1:]
-print(pred_mat.head(5))
-
-X_train, X_test, y_train, y_test = train_test_split(pred_mat, y, test_size=0.2, random_state=1)
+    per_tree_pred_tr = tree.predict(X_train).reshape(-1,1)
+    per_tree_pred_te = tree.predict(X_test).reshape(-1,1)
+    pred_train = np.c_[pred_train, per_tree_pred_tr]
+    pred_test = np.c_[pred_test, per_tree_pred_te]
 
 
-####Feed these predicted values instead of original covariates into neural networks
+pred_train = pd.DataFrame(pred_train)
+pred_train = pred_train.iloc[:, 1:]
+
+pred_test = pd.DataFrame(pred_test)
+pred_test = pred_test.iloc[:, 1:]
+
+
+####Feed these predicted values (on the test data) instead of 
+# original covariates into neural networks, estimate accuracy on the train data
 
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Sequential      #This allows appending layers to existing models
@@ -57,20 +65,19 @@ from tensorflow.keras import initializers
 from tensorflow.keras.layers.experimental import preprocessing
 
 
-epochs = 100
+epochs = 500
 batch_size = 100
-n_neurons_layer1 = 100
-n_neurons_layer2 = 100
-n_categories = 10
+n_neurons_layer1 = 500
+n_neurons_layer2 = 500
 eta_vals = np.logspace(-5, 0, 5)
 lmbd_vals = np.logspace(-5, 0, 5)
 
 def neural_network_keras(n_neurons_layer1, n_neurons_layer2, eta, lmbd):  ##Build the model
     model = Sequential()
-    model.add(Dense(n_neurons_layer1, activation='sigmoid', kernel_regularizer=regularizers.l2(lmbd)))
+    model.add(Dense(n_neurons_layer1, activation='relu', kernel_regularizer=regularizers.l2(lmbd)))
     model.add(Dense(1, activation='sigmoid'))
     
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])  ##try adam also
+    model.compile(loss='binary_crossentropy', optimizer='Adam', metrics=['accuracy'])  ##try adam also
     
     return model
 
@@ -81,9 +88,9 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
         for j, lmbd in enumerate(lmbd_vals):
             DNN = neural_network_keras(n_neurons_layer1, n_neurons_layer2, 
                                             eta=eta, lmbd=lmbd)
-            DNN.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) ##what is verbose?
-            y_pred = DNN.predict_classes(X_test)
-            scores = DNN.evaluate(X_test, y_test, verbose=1)
+            DNN.fit(pred_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
+            y_pred = DNN.predict_classes(pred_test)
+            scores = DNN.evaluate(pred_test, y_test, verbose=0)
             
             DNN_keras[i][j] = DNN
             
@@ -93,9 +100,10 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
             print()  
   
 #train_dnn()  
+
 DNN = neural_network_keras(n_neurons_layer1, n_neurons_layer2, 
-                                 eta=1, lmbd=1)
-DNN.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) ##what is verbose?
-y_pred = DNN.predict_classes(X_test)
-scores = DNN.evaluate(X_test, y_test, verbose=1)
+                           eta=1, lmbd=0.003)
+DNN.fit(pred_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
+y_pred = DNN.predict_classes(pred_test)
+scores = DNN.evaluate(pred_test, y_test, verbose=1)
 print("Test MSE = ", scores)

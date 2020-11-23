@@ -72,10 +72,10 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
             print("Test MSE = ", scores)
             print()  
   
-train_dnn()  
+#train_dnn()  
 DNN = neural_network_keras(n_neurons_layer1, n_neurons_layer2, 
                            eta=0.15, lmbd=0)
-DNN.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) ##what is verbose?
+DNN.fit(X_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0)
 y_pred = DNN.predict_classes(X_test)
 scores = DNN.evaluate(X_test, y_test, verbose=1)
 print("Test MSE = ", scores)

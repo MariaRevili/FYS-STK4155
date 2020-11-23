@@ -6,6 +6,8 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn import tree
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score
+
 
 
 
@@ -27,13 +29,16 @@ X_test = scaler.transform(X_test)
 
 
 np.random.seed(20)
-rf=RandomForestClassifier(n_estimators=1000, bootstrap=True) ##Number of Trees to build
+rf=RandomForestClassifier(n_estimators=500, bootstrap=False) ##Number of Trees to build
 rf.fit(X_train, y_train)
 y_rf_predict = rf.predict(X_test)
 print("Accuracy:", metrics.accuracy_score(y_test, y_rf_predict))
 
+X_train = pd.DataFrame(X_train)
 ## Visualize
 # tree.plot_tree(rf.estimators_[0], feature_names=X_train.columns, filled=True)
 # plt.show()
+
+
 
 
