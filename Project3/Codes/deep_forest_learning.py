@@ -6,6 +6,11 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn import tree
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+import matplotlib.pyplot as plt 
+import os
+
 
 
 ###Download the data
@@ -67,12 +72,12 @@ from tensorflow.keras.layers.experimental import preprocessing
 
 epochs = 500
 batch_size = 100
-n_neurons_layer1 = 500
-n_neurons_layer2 = 500
+n_neurons_layer1 = 100
 eta_vals = np.logspace(-5, 0, 5)
 lmbd_vals = np.logspace(-5, 0, 5)
 
-def neural_network_keras(n_neurons_layer1, n_neurons_layer2, eta, lmbd):  ##Build the model
+def neural_network_keras(n_neurons_layer1, eta, lmbd):  ##Build the model
+    
     model = Sequential()
     model.add(Dense(n_neurons_layer1, activation='relu', kernel_regularizer=regularizers.l2(lmbd)))
     model.add(Dense(1, activation='sigmoid'))
@@ -83,10 +88,15 @@ def neural_network_keras(n_neurons_layer1, n_neurons_layer2, eta, lmbd):  ##Buil
 
 DNN_keras = np.zeros((len(eta_vals), len(lmbd_vals)), dtype=object)
   
-def train_dnn():    ##fit for different learning rate and decay (lambda)  
+
+##Tune the parameters
+def train_dnn():    ##fit for different learning rate and decay (lambda) 
+     
     for i, eta in enumerate(eta_vals):
+        
         for j, lmbd in enumerate(lmbd_vals):
-            DNN = neural_network_keras(n_neurons_layer1, n_neurons_layer2, 
+            
+            DNN = neural_network_keras(n_neurons_layer1, 
                                             eta=eta, lmbd=lmbd)
             DNN.fit(pred_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
             y_pred = DNN.predict_classes(pred_test)
@@ -101,9 +111,30 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
   
 #train_dnn()  
 
-DNN = neural_network_keras(n_neurons_layer1, n_neurons_layer2, 
+
+## Show the accuracy after training
+
+DNN = neural_network_keras(n_neurons_layer1, 
                            eta=1, lmbd=0.003)
 DNN.fit(pred_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
 y_pred = DNN.predict_classes(pred_test)
 scores = DNN.evaluate(pred_test, y_test, verbose=1)
 print("Test MSE = ", scores)
+
+
+## Plot the ROC curve
+
+y_pred_prob = DNN.predict_proba(pred_test)
+fpr, tpr, threshold = metrics.roc_curve(y_test, y_pred_prob)
+roc_auc = metrics.auc(fpr, tpr)
+
+plt.title('Receiver Operating Characteristic, Deep Forest Learning')
+plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+plt.legend(loc = 'lower right')
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0, 1])
+plt.ylim([0, 1])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+#plt.savefig(os.path.join(os.path.dirname(__file__), '..', 'Plots', 'roc_dfl.png'), transparent=True, bbox_inches='tight')
+plt.show()
