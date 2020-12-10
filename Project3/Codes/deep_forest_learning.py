@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from sklearn import tree
@@ -10,6 +11,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 import matplotlib.pyplot as plt 
 import os
+
 
 
 
@@ -43,9 +45,9 @@ pred_test = np.ones((y_test.size, 1))
 rf=RandomForestClassifier(n_estimators=500, bootstrap=False) ##Number of Trees to build
 rf.fit(X_train, y_train)
 
-for tree in rf.estimators_:
-    per_tree_pred_tr = tree.predict(X_train).reshape(-1,1)
-    per_tree_pred_te = tree.predict(X_test).reshape(-1,1)
+for tr in rf.estimators_:
+    per_tree_pred_tr = tr.predict(X_train).reshape(-1,1)
+    per_tree_pred_te = tr.predict(X_test).reshape(-1,1)
     pred_train = np.c_[pred_train, per_tree_pred_tr]
     pred_test = np.c_[pred_test, per_tree_pred_te]
 
@@ -55,6 +57,37 @@ pred_train = pred_train.iloc[:, 1:]
 
 pred_test = pd.DataFrame(pred_test)
 pred_test = pred_test.iloc[:, 1:]
+
+
+
+###Now learn these trees with boosting
+max_depth = 3
+ab=AdaBoostClassifier(base_estimator=tree.DecisionTreeClassifier(max_depth=max_depth), n_estimators=500) ##Number of Trees to build
+ab.fit(pred_train, y_train)
+y_ab_predict = ab.predict(pred_test)
+print("Accuracy:", metrics.accuracy_score(y_test, y_ab_predict))
+
+pred_train_ = np.ones((y_train.size, 1))
+pred_test_ = np.ones((y_test.size, 1))
+
+
+##predict from each tree
+for tree in ab.estimators_:
+    per_tree_pred_tr = tree.predict(pred_train).reshape(-1,1)
+    per_tree_pred_te = tree.predict(pred_test).reshape(-1,1)
+    pred_train_ = np.c_[pred_train_, per_tree_pred_tr]
+    pred_test_ = np.c_[pred_test_, per_tree_pred_te]
+
+
+pred_train_ = pd.DataFrame(pred_train)
+pred_train_ = pred_train.iloc[:, 1:]
+
+pred_test_ = pd.DataFrame(pred_test)
+pred_test_ = pred_test.iloc[:, 1:]
+
+
+
+
 
 
 ####Feed these predicted values (on the test data) instead of 
@@ -116,25 +149,25 @@ def train_dnn():    ##fit for different learning rate and decay (lambda)
 
 DNN = neural_network_keras(n_neurons_layer1, 
                            eta=1, lmbd=0.003)
-DNN.fit(pred_train, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
-y_pred = DNN.predict_classes(pred_test)
-scores = DNN.evaluate(pred_test, y_test, verbose=1)
-print("Test MSE = ", scores)
+DNN.fit(pred_train_, y_train, validation_split=0.2, epochs=epochs, batch_size=batch_size, verbose=0) 
+y_pred = DNN.predict_classes(pred_test_)
+scores = DNN.evaluate(pred_test_, y_test, verbose=1)
+print("Test Accuracy NNets = ", scores)
 
 
 ## Plot the ROC curve
 
-y_pred_prob = DNN.predict_proba(pred_test)
-fpr, tpr, threshold = metrics.roc_curve(y_test, y_pred_prob)
-roc_auc = metrics.auc(fpr, tpr)
+# y_pred_prob = DNN.predict_proba(pred_test)
+# fpr, tpr, threshold = metrics.roc_curve(y_test, y_pred_prob)
+# roc_auc = metrics.auc(fpr, tpr)
 
-plt.title('Receiver Operating Characteristic, Deep Forest Learning')
-plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
-plt.legend(loc = 'lower right')
-plt.plot([0, 1], [0, 1],'r--')
-plt.xlim([0, 1])
-plt.ylim([0, 1])
-plt.ylabel('True Positive Rate')
-plt.xlabel('False Positive Rate')
+# plt.title('Receiver Operating Characteristic, Deep Forest Learning')
+# plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+# plt.legend(loc = 'lower right')
+# plt.plot([0, 1], [0, 1],'r--')
+# plt.xlim([0, 1])
+# plt.ylim([0, 1])
+# plt.ylabel('True Positive Rate')
+# plt.xlabel('False Positive Rate')
 #plt.savefig(os.path.join(os.path.dirname(__file__), '..', 'Plots', 'roc_dfl.png'), transparent=True, bbox_inches='tight')
-plt.show()
+#plt.show()

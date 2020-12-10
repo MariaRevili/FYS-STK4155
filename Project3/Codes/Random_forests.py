@@ -63,5 +63,3 @@ plt.xlabel('False Positive Rate')
 #plt.savefig(os.path.join(os.path.dirname(__file__), '..', 'Plots', 'roc_rf.png'), transparent=True, bbox_inches='tight')
 plt.show()
 
-
-
