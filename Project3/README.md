@@ -5,7 +5,7 @@ Clone the repository:
 git clone git@github.com:MariaRevili/FYS-STK4155.git 
 ```
 
-**Codes** - Consists of the boosting, random forests, neural networks, deep forest learning and boosting in neural networks
+**Codes** - Consists of boosting, random forests, neural networks, deep forest learning and boosting in neural networks
 
 **Plots** - Graphs and figures used in the report
 
